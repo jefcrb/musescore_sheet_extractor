@@ -3,6 +3,7 @@ import wget
 import json
 import os
 from urllib.parse import urlparse
+from svgutils.compose import Figure, SVG
 
 class MSE:
     def __init__(self):
@@ -44,7 +45,7 @@ class MSE:
             url = json.loads(r.text)['info']['url']
 
             try:
-                wget.download(url, self.title)
+                self.rescale(wget.download(url, self.title), i)
             except:
                 break
 
@@ -53,10 +54,14 @@ class MSE:
     
     def get_title(self):
         i = 0
-        while not os.path.exists(f'sheets_{i}'):
+        while os.path.exists(f'sheets_{i}'):
             i += 1
 
         self.title = f'sheets_{i}'
+
+
+    def rescale(self, sheet, page):
+        Figure("2976.38", "4209.45", SVG(sheet).scale(0.4)).save(f'{self.title}/score_{page}.svg')
 
 
 
