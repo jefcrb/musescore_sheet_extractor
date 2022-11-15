@@ -2,7 +2,6 @@ import requests
 import wget
 import json
 import os
-from mechanize import Browser
 from urllib.parse import urlparse
 
 class MSE:
@@ -54,10 +53,9 @@ class MSE:
     
     def get_title(self):
         i = 0
-        while True:
-            if not os.path.exists(f'sheets_{i}'):
-                break
+        while not os.path.exists(f'sheets_{i}'):
             i += 1
+
         self.title = f'sheets_{i}'
 
 
