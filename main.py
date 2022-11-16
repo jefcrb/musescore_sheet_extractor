@@ -8,11 +8,12 @@ class MSE:
     def __init__(self):
         self.u = ""
         self.h = {'Authorization': '8c022bdef45341074ce876ae57a48f64b86cdcf5'}
+        self.result = aw.Document()
 
         self.get_url()
         self.get_title()
-        self.prepare_dir()
         self.get_sheets()
+        self.result.save(self.title)
 
 
     def get_url(self):
@@ -23,18 +24,12 @@ class MSE:
             try:
                 path = inp_parsed.path.split("/")
                 self.id = path[path.index('scores') + 1]
-                assert id != ''
-                print(id)
                 self.u = inp
             except:
                 print('No song id found')
 
         else:
             print('Invalid url')
-
-
-    def prepare_dir(self):
-        os.mkdir(self.title)
 
 
     def get_sheets(self):
@@ -53,10 +48,10 @@ class MSE:
 
     def get_title(self):
         i = 0
-        while os.path.exists(f'sheets_{i}'):
+        while os.path.exists(f'sheets_{i}.pdf'):
             i += 1
 
-        self.title = f'sheets_{i}'
+        self.title = f'sheets_{i}.pdf'
 
 
     def sheet_to_pdf(self, sheet, page):
@@ -67,8 +62,9 @@ class MSE:
         builder.page_setup.right_margin  = 0
         builder.page_setup.bottom_margin = 0
         builder.page_setup.left_margin   = 0
-        doc.save(f'{self.title}/score_{page}.pdf')
-
+        
+        self.result.append_document(doc, aw.ImportFormatMode.KEEP_SOURCE_FORMATTING)
+        print(f'page {page + 1} done')
 
 
 if __name__ == '__main__':
