@@ -1,9 +1,7 @@
 import requests
-import wget
 import json
 import os
 from urllib.parse import urlparse
-from svgutils.compose import Figure, SVG
 import aspose.words as aw
 
 class MSE:
@@ -45,7 +43,10 @@ class MSE:
             r = requests.get(f'https://musescore.com/api/jmuse?id={self.id}&index={i}&type=img&v2=1', headers=self.h)
             url = json.loads(r.text)['info']['url']
 
-            self.sheet_to_pdf(wget.download(url, self.title), i)
+            try:
+                self.sheet_to_pdf(url, i)
+            except:
+                break
 
             i += 1
 
@@ -67,7 +68,6 @@ class MSE:
         builder.page_setup.bottom_margin = 0
         builder.page_setup.left_margin   = 0
         doc.save(f'{self.title}/score_{page}.pdf')
-        
 
 
 
