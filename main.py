@@ -4,6 +4,7 @@ import json
 import os
 from urllib.parse import urlparse
 from svgutils.compose import Figure, SVG
+import aspose.words as aw
 
 class MSE:
     def __init__(self):
@@ -44,14 +45,11 @@ class MSE:
             r = requests.get(f'https://musescore.com/api/jmuse?id={self.id}&index={i}&type=img&v2=1', headers=self.h)
             url = json.loads(r.text)['info']['url']
 
-            try:
-                self.rescale(wget.download(url, self.title), i)
-            except:
-                break
+            self.sheet_to_pdf(wget.download(url, self.title), i)
 
             i += 1
 
-    
+
     def get_title(self):
         i = 0
         while os.path.exists(f'sheets_{i}'):
@@ -60,8 +58,16 @@ class MSE:
         self.title = f'sheets_{i}'
 
 
-    def rescale(self, sheet, page):
-        Figure("2976.38", "4209.45", SVG(sheet).scale(0.4)).save(f'{self.title}/score_{page}.svg')
+    def sheet_to_pdf(self, sheet, page):
+        doc = aw.Document()
+        builder = aw.DocumentBuilder(doc)
+        builder.insert_image(sheet, 0, 0, 0, 0, 618, 800, 1)
+        builder.page_setup.top_margin    = 0
+        builder.page_setup.right_margin  = 0
+        builder.page_setup.bottom_margin = 0
+        builder.page_setup.left_margin   = 0
+        doc.save(f'{self.title}/score_{page}.pdf')
+        
 
 
 
